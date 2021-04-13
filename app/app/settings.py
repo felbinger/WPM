@@ -196,8 +196,11 @@ if environ.get('LDAP_URI', False):
 
 # OAuth
 if environ.get('OAUTH_URL', False):
+    INSTALLED_APPS.append('oauth2_provider')
+
     OAUTH_URL = environ.get('OAUTH_URL')
     OAUTH_CLIENT_ID = environ.get("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = environ.get('OAUTH_CLIENT_SECRET')
     AUTHENTICATION_BACKENDS += ['oauth2_provider.backends.OAuth2Backend']
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
