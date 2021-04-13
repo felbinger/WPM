@@ -7,13 +7,17 @@
 case ${DBMS} in
 "mariadb")
   export SQL_ENGINE=django.db.backends.mysql
-  export SQL_PORT=3306
-  export SQL_DATABASE=${PROJECT_NAME}
+  # only set port if SQL_PORT hasn't been overwritten using the docker environment variables
+  if [ -z "${SQL_PORT}" ]; then
+    export SQL_PORT=3306
+  fi
   ;;
 "postgres")
   export SQL_ENGINE=django.db.backends.postgresql
-  export SQL_PORT=5432
-  export SQL_DATABASE=${PROJECT_NAME}
+  # only set port if SQL_PORT hasn't been overwritten using the docker environment variables
+  if [ -z "${SQL_PORT}" ]; then
+    export SQL_PORT=5432
+  fi
   ;;
 "sqlite3")
   export SQL_ENGINE=django.db.backends.sqlite3
@@ -45,9 +49,9 @@ python manage.py migrate
 # shellcheck disable=SC2198
 if [ -z "${@}" ]; then
   if [ "${DEBUG}" != 0 ]; then
-    gunicorn ${PROJECT_NAME}.wsgi:application --bind 0.0.0.0:8000 --log-level DEBUG
+    gunicorn app.wsgi:application --bind 0.0.0.0:8000 --log-level DEBUG
   else
-    gunicorn ${PROJECT_NAME}.wsgi:application --bind 0.0.0.0:8000
+    gunicorn app.wsgi:application --bind 0.0.0.0:8000
   fi
 else
   exec "${@}"

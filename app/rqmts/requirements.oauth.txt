@@ -1,0 +1,1 @@
+django-oauth-toolkit==1.5.0
