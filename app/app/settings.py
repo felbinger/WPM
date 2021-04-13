@@ -196,7 +196,9 @@ if environ.get('LDAP_URI', False):
 
 # OAuth
 if environ.get('OAUTH_URL', False):
-    INSTALLED_APPS.append('oauth2_provider')
+    INSTALLED_APPS += 'oauth2_provider'
+    AUTHENTICATION_BACKENDS += 'oauth2_provider.backends.OAuth2Backend'
+    MIDDLEWARE += 'oauth2_provider.middleware.OAuth2TokenMiddleware'
 
     OAUTH_URL = environ.get('OAUTH_URL')
     OAUTH_CLIENT_ID = environ.get("OAUTH_CLIENT_ID")
