@@ -1,11 +1,19 @@
 # Python Django Deployment Template
-This template has been created for easy deployment of django applications, feel free to use it for other frameworks than django as well.
+This template has been created for easy deployment of django applications, 
+feel free to use it for other frameworks than django as well.
 
-Make sure to enabled improved container support in feature preview. Don't forget to change the image name in [`.github/workflows/ci.yaml`](./.github/workflows/ci.yaml)
+Make sure to enabled improved container support in feature preview. 
+Don't forget to change the image name in [`.github/workflows/ci.yaml`](./.github/workflows/ci.yaml)
+
+If you would like to use the oauth feature,
+you need to adjust the [`oauth_redirect` function](./app/base/views.py). 
+The provided example is working for authentication using Discord.
 
 ## Installation
-First you need to install [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)  
-After you have started the services (`docker-compose up -d`), you can collect the static files and create a superuser account:  
+First you need to install [docker](https://docs.docker.com/engine/install/) 
+and [docker-compose](https://docs.docker.com/compose/install/)  
+After you have started the services (`docker-compose up -d`), 
+you can collect the static files and create a superuser account:  
 ```bash
 # collect static files
 docker-compose exec -u0 django /bin/sh -c 'python manage.py collectstatic --no-input'
@@ -22,12 +30,12 @@ You can change the port inside the [`docker-compose.yml`](./docker-compose.yml#L
 **You can use three database types:**
 - MariaDB  
 - PostgreSQL  
-- SQLite3 (You should only use sqlit3 for testing purpose)  
+- SQLite3 (You should only use sqlite3 for testing purpose)  
 
 **You can use three authentication sources:**
 - Local (Django) Authentication
 - OpenLDAP
-- OAuth (If your using pytemplate, you need to implement the required functions inside the django app yourself)
+- OAuth (django [base app](./app/base/views.py) adjustments required)
 
 The schema for the docker tags is: `xxxxxx/yyyyyy:version-dbms-auth`:
 - `felbinger/pytemplate:latest-sqlite3-localauth`

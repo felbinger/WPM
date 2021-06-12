@@ -1,7 +1,8 @@
 ARG DBMS="postgres"
 ARG AUTH="localauth"
+ARG PY_VERSION="3.9"
 
-FROM python:3.9-alpine as builder
+FROM python:${PY_VERSION}-alpine as builder
 ARG DBMS
 ARG AUTH
 
@@ -27,12 +28,15 @@ RUN cp rqmts/requirements.txt requirements.txt; \
 
 RUN pip install --prefix=/build/venv -r requirements.txt
 
-FROM python:3.9-alpine
+FROM python:${PY_VERSION}-alpine
 ARG DBMS
 ARG AUTH
 
+ENV ENV_DBMS=${DBMS}
+ENV ENV_AUTH=${AUTH}
+
 # app config
-ENV ALLOWED_HOSTS='0.0.0.0' DEBUG=0
+ENV ALLOWED_HOSTS='0.0.0.0' DEBUG=0 SCHEMA='https'
 
 # create the app user and directories
 ENV HOME=/home/app APP_HOME=/home/app/web
@@ -46,14 +50,12 @@ WORKDIR ${APP_HOME}
 # install database dependencies
 RUN if [[ "${DBMS}" == "postgres" ]]; then apk add --no-cache libpq; fi
 RUN if [[ "${AUTH}" == "openldap" ]]; then apk add --no-cache libldap; fi
-RUN if [[ "${AUTH}" == "oauth"]]; then apk add --no-cache libffi-dev openssl-dev; fi
+RUN if [[ "${AUTH}" == "oauth" ]]; then apk add --no-cache libffi-dev openssl-dev; fi
 
 COPY --from=builder /build/venv/ /usr/local/
 
 # copy project
-COPY --chown=app:app app ${APP_HOME}
-COPY --chown=app:app entrypoint.sh ${APP_HOME}
-COPY --chown=app:app manage.py ${APP_HOME}
+COPY --chown=app:app . ${APP_HOME}
 
 ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 EXPOSE 8000

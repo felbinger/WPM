@@ -5,41 +5,42 @@ services:
     restart: always
     environment:
       - 'POSTGRES_PASSWORD=SECRET_PASSWORD'
-      - 'POSTGRES_DB=django'
+      - 'POSTGRES_DB=app'
     volumes:
       - 'postgres-data:/var/lib/postgres/data'
 
-  app:
+  nginx:
     image: nginx:stable-alpine
     restart: always
-    depends_on:
-      - django
     ports:
       - '8080:80'
     volumes:
       - './resources/nginx.conf:/etc/nginx/conf.d/default.conf'
-      - 'django-static:/usr/share/nginx/html/static/'
+      - 'app-static:/usr/share/nginx/html/static/'
 
-  django:
+  app:
     build:
       context: app
       args:
        - 'DBMS=postgres'
        - 'AUTH=oauth'
     restart: always
-    depends_on:
-      - postgres
     environment:
       - 'SQL_ENGINE=django.db.backends.postgresql'
       - 'SQL_HOST=postgres'
       - 'SQL_USER=postgres'
       - 'SQL_PASSWORD=SECRET_PASSWORD'
-      - 'SQL_DATABASE=django'
-      - 'ALLOWED_HOSTS=django'
+      - 'SQL_DATABASE=app'
+      - 'ALLOWED_HOSTS=app'
       - 'DEBUG=1'
+      - 'OAUTH_CLIENT_ID=817344144438591488'
+      - 'OAUTH_CLIENT_SECRET=8MMdQ5jjvEa2LXn4Aboq-OkxqI-4CWcw'
+      - 'OAUTH_URL=https://discord.com/api/oauth2/authorize?client_id=817344144438591488&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Foauth%2Fredirect&response_type=code&scope=identify'
+      - 'SCHEMA=http'
+      - 'PUBLIC_URL=127.0.0.1:8080'
     volumes:
-      - 'django-static:/home/app/web/static'
+      - 'app-static:/home/app/web/static'
 
 volumes:
   postgres-data:
-  django-static:
+  app-static:

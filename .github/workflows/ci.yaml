@@ -9,7 +9,7 @@ on:
 env:
   # TODO adjust IMAGE_NAME
   IMAGE_NAME: felbinger/pytemplate
-  DOCKER_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64 #,linux/arm/v6,linux/386,linux/ppc64le,linux/s390x
+  DOCKER_PLATFORMS: linux/amd64  #,linux/arm/v7,linux/arm64,linux/arm/v6,linux/386,linux/ppc64le,linux/s390x
   PYTHON_VERSION: 3.9
 
 jobs:
