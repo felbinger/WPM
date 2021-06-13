@@ -11,5 +11,7 @@ urlpatterns = [
 if environ.get('OAUTH_URL', False):
     from .views import oauth, oauth_redirect
 
-    urlpatterns.append(path('oauth/', oauth, name='oauth'))
-    urlpatterns.append(path('oauth/redirect', oauth_redirect, name='oauth_redirect'))
+    urlpatterns += [
+        path('oauth/', oauth, name='oauth'),
+        path('oauth/redirect', oauth_redirect, name='oauth_redirect'),
+    ]
