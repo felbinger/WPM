@@ -12,7 +12,10 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="https://github.com/felbinger/pytemplate">GitHub</a></li>
                         {% if not user.is_authenticated %}
-                        <li><a class="dropdown-item" href="{% url 'base:oauth' %}">Login (OAuth)</a></li>
+                            {# TODO check if oauth2 (open id connect) authentication is even enabled,
+                                otherwise the reverse search for base:oauth will fail if oauth2 is disabled! #}
+                            {# href should point to {% url 'base:oauth' %} #}
+                            <li><a class="dropdown-item" href="/oauth">Login (OAuth)</a></li>
                         {% endif %}
                         {% if user.is_staff and user.is_superuser %}
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Dashboard</a></li>
