@@ -30,7 +30,7 @@ You can change the port inside the [`docker-compose.yml`](./docker-compose.yml#L
 **You can use three database types:**
 - MariaDB  
 - PostgreSQL  
-- SQLite3 (You should only use sqlite3 for testing purpose)  
+- SQLite3 (only for testing purpose)  
 
 **You can use three authentication sources:**
 - Local (Django) Authentication
@@ -38,24 +38,18 @@ You can change the port inside the [`docker-compose.yml`](./docker-compose.yml#L
 - OAuth (django [base app](./app/base/views.py) adjustments required)
 
 The schema for the docker tags is: `xxxxxx/yyyyyy:version-dbms-auth`:
-- `felbinger/pytemplate:latest-sqlite3-localauth`
 - `felbinger/pytemplate:latest-mariadb-localauth`
 - `felbinger/pytemplate:latest-postgres-localauth`
-- `felbinger/pytemplate:latest-sqlite3-openldap`
 - `felbinger/pytemplate:latest-mariadb-openldap`
 - `felbinger/pytemplate:latest-postgres-openldap`
-- `felbinger/pytemplate:latest-sqlite3-oauth2`
 - `felbinger/pytemplate:latest-mariadb-oauth2`
 - `felbinger/pytemplate:latest-postgres-oauth2`
 
 
-- `felbinger/pytemplate:edge-sqlite3-localauth`
 - `felbinger/pytemplate:edge-mariadb-localauth`
 - `felbinger/pytemplate:edge-postgres-localauth`
-- `felbinger/pytemplate:edge-sqlite3-openldap`
 - `felbinger/pytemplate:edge-mariadb-openldap`
 - `felbinger/pytemplate:edge-postgres-openldap`
-- `felbinger/pytemplate:edge-sqlite3-oauth2`
 - `felbinger/pytemplate:edge-mariadb-oauth2`
 - `felbinger/pytemplate:edge-postgres-oauth2`  
 

@@ -1,6 +1,6 @@
 ARG DBMS="postgres"
 ARG AUTH="localauth"
-ARG PY_VERSION="3.9"
+ARG PY_VERSION="3.10"
 
 FROM python:${PY_VERSION}-alpine as builder
 ARG DBMS
@@ -14,7 +14,7 @@ RUN apk update \
 
 # install database dependencies
 RUN if [[ "${DBMS}" == "postgres" ]]; then apk add --no-cache postgresql-dev; fi
-RUN if [[ "${AUTH}" == "openldap" ]]; then apk add --no-cache build-base openldap-dev; fi
+RUN if [[ "${AUTH}" == "openldap" ]]; then echo "INPUT ( libldap.so )" > /usr/lib/libldap_r.so; apk add --no-cache build-base openldap-dev; fi
 RUN if [[ "${AUTH}" == "oauth" ]]; then apk add --no-cache libffi-dev openssl-dev cargo; fi
 
 # install dependencies
