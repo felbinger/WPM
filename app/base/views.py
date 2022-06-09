@@ -22,7 +22,7 @@ if environ.get('OAUTH_URL', False):
         if 'code' not in request.GET:
             return HttpResponseBadRequest()
 
-        auth_resp = requests.post("https://discord.com/api/oauth2/token", data={
+        auth_resp = requests.post("https://keycloak.general.pve2.secshell.net/realms/main/protocol/openid-connect/token", data={
             "client_id": settings.OAUTH_CLIENT_ID,
             "client_secret": settings.OAUTH_CLIENT_SECRET,
             "grant_type": "authorization_code",
@@ -36,7 +36,7 @@ if environ.get('OAUTH_URL', False):
         if not auth_resp.ok:
             return HttpResponseBadRequest()
 
-        identity_resp = requests.get('https://discord.com/api/v8/users/@me', headers={
+        identity_resp = requests.get('https://keycloak.general.pve2.secshell.net/realms/main/protocol/openid-connect/userinfo', headers={
             'Authorization': f'{auth_resp.json().get("token_type")} {auth_resp.json().get("access_token")}'
         })
         if not identity_resp.ok:

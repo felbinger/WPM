@@ -46,7 +46,8 @@ if environ.get('OAUTH_URL', False):
 
 # add your own applications
 INSTALLED_APPS += [
-    'base.apps.BaseConfig'
+    'base.apps.BaseConfig',
+    'manager.apps.ManagerConfig',
 ]
 
 MIDDLEWARE = [
@@ -216,3 +217,10 @@ if environ.get('OAUTH_URL', False):
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Wireguard Peer Manager specific settings
+WG_DESCRIPTION = "vyos.pve2.secshell.net"
+WG_PUBKEY = "5wzyc8WNqrzvVZKi0XohYi/kwaog3rfXPPhXnMFIiEo="
+WG_ENDPOINT = "88.99.59.71:51920"
+WG_INTERFACE = "wg100"
+WG_IPV6_PREFIX = "2001:db8::/64"

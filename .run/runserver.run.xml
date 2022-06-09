@@ -1,18 +1,19 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runserver" type="Python.DjangoServer" factoryName="Django server">
-    <module name="pytemplate" />
+    <module name="WPM_App" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
-      <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="SECRET_KEY" value="insecure" />
       <env name="DEBUG" value="1" />
-      <env name="SCHEMA" value="http" />
-      <env name="PUBLIC_URL" value="127.0.0.1:8080" />
       <env name="DJANGO_SETTINGS_MODULE" value="app.settings" />
+      <env name="OAUTH_URL" value="https://keycloak.general.pve2.secshell.net/realms/main/protocol/openid-connect/auth" />
+      <env name="PUBLIC_URL" value="https://wpm.general.pve2.secshell.net" />
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="SCHEMA" value="http" />
+      <env name="SECRET_KEY" value="insecure" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/app" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />

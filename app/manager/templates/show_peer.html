@@ -5,7 +5,7 @@
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Overview</title>
+        <title>Wireguard Peer Manager</title>
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
               integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
@@ -25,27 +25,29 @@
         <div class="container">
             <div class="card my-5">
                 <div class="card-header" style="text-align: center;">
-                    <h5 style="margin-bottom: 0;">What is Wireguard Peer Manager</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 style="margin-bottom: 0;">Wireguard Config</h5>
+                        <a href="{% url 'manager:index' %}"><i class="fas fa-undo float-right"></i></a>
+                    </div>
                 </div>
                 <div class="card-body">
-                    Wireguard Peer Manager allows both users and administrators of Secure Shell Networks
-                    to easily configure the vyos wireguard client peer interface. The end devices of all clients
-                    connect to this wireguard interface. Since each device requires its own key pair and tunnel ip
-                    addresses (to ensure that multiple devices can be connected at the same time), users can configure
-                    their peers themselves.<br>
-                    <br>
-                    Wireguard Peer Manager is deployed internally as a docker container on the general vm,
-                    minimizing the risk of unauthorized use. It is based on Fireguard, a project by TNT2k and Defelo.<br>
-                    <br>
-                    Users can create new peers, delete existing peers and view the Wireguard configuration.
-                    The editing of existing peers was deliberately omitted.<br>
-                    <br>
-                    Managers can manage users and their peers, as well as customize the firewall rules for a user.
-                    <br>
-
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'manager:index' %}">You are logged in, so feel free to try it :)</a>
-                    {% endif %}
+                {% if not peer %}
+                    You haven't created any peers yet. Click <a href="{% url 'manager:overview' %}">here</a> to add a new peer.
+                {% else %}
+                    <code>
+                        # {{ remote.description }}<br>
+                        <br>
+                        [Interface]<br>
+                        Address = {{ peer.tunnel_ipv4 }}/32,{{ peer.tunnel_ipv6 }}/128<br>
+                        PrivateKey = ###### YOUR PRIVATE KEY ######<br>
+                        <br>
+                        [Peer]<br>
+                        PublicKey = {{ remote.publicKey }}<br>
+                        Endpoint = {{ remote.endpoint }}<br>
+                        AllowedIPs = 0.0.0.0/0,::/0<br>
+                        PersistentKeepalive = 30<br>
+                    </code>
+                {% endif %}
                 </div>
             </div>
         </div>
