@@ -1,5 +1,5 @@
 ARG DBMS="postgres"
-ARG AUTH="localauth"
+ARG AUTH="oauth"
 ARG PY_VERSION="3.10"
 
 FROM python:${PY_VERSION}-alpine as builder
@@ -50,7 +50,7 @@ WORKDIR ${APP_HOME}
 # install database dependencies
 RUN if [[ "${DBMS}" == "postgres" ]]; then apk add --no-cache libpq; fi
 RUN if [[ "${AUTH}" == "openldap" ]]; then apk add --no-cache libldap; fi
-RUN if [[ "${AUTH}" == "oauth" ]]; then apk add --no-cache libffi-dev openssl-dev; fi
+RUN if [[ "${AUTH}" == "oauth" ]]; then apk add --no-cache gcc musl-dev libffi-dev openssl-dev; fi
 
 COPY --from=builder /build/venv/ /usr/local/
 

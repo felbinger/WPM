@@ -54,7 +54,7 @@ jobs:
     strategy:
       matrix:
         dbms: [ 'mariadb', 'postgres' ]
-        auth: [ 'localauth', 'oauth2' ] # 'openldap'
+        auth: [ 'localauth', 'oauth' ] # 'openldap'
 
     steps:
       - uses: actions/checkout@v3
@@ -70,7 +70,7 @@ jobs:
             {{version}}
             {{major}}.{{minor}}
           flavor: ${{ matrix.dbms }}-${{ matrix.auth }}
-          main-flavor: ${{ matrix.dbms == 'postgres' && matrix.auth == 'oauth2' }}
+          main-flavor: ${{ matrix.dbms == 'postgres' && matrix.auth == 'oauth' }}
 
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
