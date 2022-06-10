@@ -30,11 +30,11 @@ esac
 
 case ${ENV_AUTH} in
 "oauth")
-  if [ -z "${PUBLIC_URL}" ]; then
-    echo "You need to specify PUBLIC_URL for oauth!"
+  if [ -z "${SITE_URL}" ]; then
+    echo "You need to specify SITE_URL for oauth!"
     exit 1
   fi
-  echo "Using Public URL: ${SCHEMA}://${PUBLIC_URL}"
+  echo "Using Public URL: ${SITE_SCHEMA:=https}://${SITE_URL}:${SITE_PORT:=443}"
   ;;
 esac
 
@@ -55,6 +55,33 @@ if [ "${ENV_DBMS}" != "sqlite3" ]; then
 fi
 
 python manage.py migrate
+
+# verify wireguard peer manager specific environment variables exist
+failed=0
+if [ -z "${WG_DESCRIPTION}" ]; then
+  echo "Missing environment variable: WG_DESCRIPTION"
+  failed=1
+fi
+if [ -z "${WG_PUBKEY}" ]; then
+  echo "Missing environment variable: WG_PUBKEY"
+  failed=1
+fi
+if [ -z "${WG_ENDPOINT}" ]; then
+  echo "Missing environment variable: WG_ENDPOINT"
+  failed=1
+fi
+if [ -z "${WG_IPV4_NETWORK}" ]; then
+  echo "Missing environment variable: WG_IPV4_NETWORK"
+  failed=1
+fi
+if [ -z "${WG_IPV6_PREFIX}" ]; then
+  echo "Missing environment variable: WG_IPV6_PREFIX"
+  failed=1
+fi
+if [ ${failed} -ne 0 ]; then
+  exit 1
+fi
+
 
 # shellcheck disable=SC2198
 if [ -z "${@}" ]; then

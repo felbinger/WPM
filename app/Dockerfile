@@ -36,7 +36,7 @@ ENV ENV_DBMS=${DBMS}
 ENV ENV_AUTH=${AUTH}
 
 # app config
-ENV ALLOWED_HOSTS='0.0.0.0' DEBUG=0 SCHEMA='https'
+ENV ALLOWED_HOSTS='0.0.0.0' DEBUG=0
 
 # create the app user and directories
 ENV HOME=/home/app APP_HOME=/home/app/web

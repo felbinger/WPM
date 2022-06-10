@@ -6,7 +6,6 @@ from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 
 from ipaddress import IPv4Network, IPv6Address, IPv6Network
-from string import hexdigits
 
 from manager.forms import NewPeerForm
 from manager.models import Peer
@@ -40,11 +39,11 @@ def _get_random_ipv6_address(ipv6_prefix) -> str:
 
 
 # TODO improve
-def _get_next_ipv4_address() -> str:
+def _get_next_ipv4_address(ipv4_network: str) -> str:
     used_ipv4_addresses = [str(p.tunnel_ipv4) for p in Peer.objects.all()]
     # vyos itself has 10.2.248.1
-    used_ipv4_addresses.append("10.2.248.1")
-    for addr in IPv4Network('10.2.248.0/22').hosts():
+    used_ipv4_addresses.append(str(next(IPv4Network(ipv4_network).hosts())))
+    for addr in IPv4Network(ipv4_network).hosts():
         if str(addr) not in used_ipv4_addresses:
             # return first address which is not in use
             return str(addr)
@@ -59,7 +58,7 @@ def add(request: HttpRequest) -> HttpResponse:
                 owner=request.user,
                 name=request.POST['name'],
                 public_key=request.POST['public_key'],
-                tunnel_ipv4=_get_next_ipv4_address(),
+                tunnel_ipv4=_get_next_ipv4_address(settings.WG_IPV4_NETWORK),
                 tunnel_ipv6=_get_random_ipv6_address(settings.WG_IPV6_PREFIX),
             )
 

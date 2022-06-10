@@ -203,10 +203,11 @@ if environ.get('OAUTH_URL', False):
     MIDDLEWARE += ['oauth2_provider.middleware.OAuth2TokenMiddleware']
 
     # public url of the app
-    PUBLIC_URL = environ.get("PUBLIC_URL")
-    SCHEMA = environ.get("SCHEMA")
+    SITE_SCHEMA = environ.get("SITE_SCHEMA", "https")
+    SITE_URL = environ.get("SITE_URL")
+    SITE_PORT = environ.get("SITE_PORT", 443)
 
-    LOGIN_REDIRECT_URL = "/"
+    LOGIN_REDIRECT_URL = "/manage/"
     LOGOUT_REDIRECT_URL = "/"
 
     OAUTH_URL = environ.get('OAUTH_URL')
@@ -219,8 +220,9 @@ if environ.get('OAUTH_URL', False):
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Wireguard Peer Manager specific settings
-WG_DESCRIPTION = "vyos.pve2.secshell.net"
-WG_PUBKEY = "5wzyc8WNqrzvVZKi0XohYi/kwaog3rfXPPhXnMFIiEo="
-WG_ENDPOINT = "88.99.59.71:51920"
-WG_INTERFACE = "wg100"
-WG_IPV6_PREFIX = "2001:db8::/64"
+WG_DESCRIPTION = environ.get("WG_DESCRIPTION")
+WG_PUBKEY = environ.get("WG_PUBKEY")
+WG_ENDPOINT = environ.get("WG_ENDPOINT")
+WG_INTERFACE = environ.get("WG_INTERFACE", "wg100")
+WG_IPV4_NETWORK = environ.get("WG_IPV4_NETWORK")
+WG_IPV6_PREFIX = environ.get("WG_IPV6_PREFIX")

@@ -26,18 +26,29 @@ services:
        - 'AUTH=oauth'
     restart: always
     environment:
+      # Database Section
       - 'SQL_ENGINE=django.db.backends.postgresql'
       - 'SQL_HOST=postgres'
       - 'SQL_USER=postgres'
       - 'SQL_PASSWORD=SECRET_PASSWORD'
       - 'SQL_DATABASE=app'
+
+      # Django Section
       - 'ALLOWED_HOSTS=app'
       - 'DEBUG=1'
-      - 'OAUTH_CLIENT_ID=817344144438591488'
+
+      # Authentication Section
+      - 'OAUTH_CLIENT_ID=wpm.general.example.secshell.net'
       - 'OAUTH_CLIENT_SECRET=8MMdQ5jjvEa2LXn4Aboq-OkxqI-4CWcw'
-      - 'OAUTH_URL=https://discord.com/api/oauth2/authorize?client_id=817344144438591488&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Foauth%2Fredirect&response_type=code&scope=identify'
-      - 'SCHEMA=http'
-      - 'PUBLIC_URL=127.0.0.1:8080'
+      - 'OAUTH_URL=https://id.secshell.de/realms/main/protocol/openid-connect/auth'
+      - 'SITE_URL=wpm.general.example.secshell.net'
+
+      # Wireguard Peer Manager Section
+      - 'WG_DESCRIPTION=vyos.example.secshell.net'
+      - 'WG_PUBKEY=OJQcRifGpq/z6le52yo2V8T32JghbJ1x4hX1QYkj8Eo='
+      - 'WG_ENDPOINT=111.222.333.4444:51920'
+      - 'WG_IPV4_NETWORK=10.0.248.0/22'
+      - 'WG_IPV6_PREFIX=2001:db8::/64'
     volumes:
       - 'app-static:/home/app/web/static'
 
