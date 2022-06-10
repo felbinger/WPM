@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -72,8 +72,8 @@ jobs:
           flavor: ${{ matrix.dbms }}-${{ matrix.auth }}
           main-flavor: ${{ matrix.dbms == 'postgres' && matrix.auth == 'oauth2' }}
 
-      - uses: docker/setup-qemu-action@v1
-      - uses: docker/setup-buildx-action@v1
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
 
       - name: Cache Docker layers
         uses: actions/cache@v3
@@ -85,14 +85,14 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
 
       - name: Build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: app
           file: app/Dockerfile
