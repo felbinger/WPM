@@ -70,7 +70,7 @@ jobs:
             {{version}}
             {{major}}.{{minor}}
           flavor: ${{ matrix.dbms }}-${{ matrix.auth }}
-          main-flavor: ${{ matrix.dbms == 'postgres' && matrix.auth == 'localauth' }}
+          main-flavor: ${{ matrix.dbms == 'postgres' && matrix.auth == 'oauth2' }}
 
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
