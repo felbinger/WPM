@@ -17,7 +17,12 @@ def index(request: HttpRequest) -> HttpResponse:
 
 if environ.get('OAUTH_URL', False):
     def oauth(request: HttpRequest) -> HttpResponse:
-        redirect_uri = f'{settings.SITE_SCHEMA}%3A%2F%2F{settings.SITE_URL}:{settings.SITE_PORT}{reverse("base:oauth_redirect")}'
+        # leave default ports out of redirect_url - otherwise they need to be specified in keycloak
+        redirect_uri = f'{settings.SITE_SCHEMA}%3A%2F%2F{settings.SITE_URL}'
+        if (settings.SITE_SCHEMA == 'http' and str(settings.SITE_PORT) != '80') \
+                or (settings.SITE_SCHEMA == 'https' and str(settings.SITE_PORT) != '443'):
+            redirect_uri += f':{settings.SITE_PORT}'
+        redirect_uri += reverse("base:oauth_redirect")
         return redirect(
             f'{settings.OAUTH_URL}?'
             f'client_id={settings.OAUTH_CLIENT_ID}'
@@ -31,13 +36,19 @@ if environ.get('OAUTH_URL', False):
         if 'code' not in request.GET:
             return HttpResponseBadRequest()
 
+        redirect_uri = f'{settings.SITE_SCHEMA}://{settings.SITE_URL}'
+        if (settings.SITE_SCHEMA == 'http' and str(settings.SITE_PORT) != '80') \
+                or (settings.SITE_SCHEMA == 'https' and str(settings.SITE_PORT) != '443'):
+            redirect_uri += f':{settings.SITE_PORT}'
+        redirect_uri += reverse("base:oauth_redirect")
+
         auth_resp = requests.post(
             "https://keycloak.general.pve2.secshell.net/realms/main/protocol/openid-connect/token", data={
                 "client_id": settings.OAUTH_CLIENT_ID,
                 "client_secret": settings.OAUTH_CLIENT_SECRET,
                 "grant_type": "authorization_code",
                 "code": request.GET['code'],
-                "redirect_uri": f"{settings.SITE_SCHEMA}://{settings.SITE_URL}:{settings.SITE_PORT}{reverse('base:oauth_redirect')}",
+                "redirect_uri": redirect_uri,
                 "scope": "identify",
             }, headers={
                 'Content-Type': 'application/x-www-form-urlencoded',
