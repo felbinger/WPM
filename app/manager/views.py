@@ -19,8 +19,8 @@ def index(request: HttpRequest) -> HttpResponse:
 # TODO improve
 def _get_random_ipv6_address(ipv6_prefix) -> str:
     net = IPv6Network(ipv6_prefix)
-    used_ipv6_addresses = [p.tunnel_ipv6[:-19] for p in Peer.objects.all()]
-    # vyos itself has the first address of the ipv6 network (...::1)
+    used_ipv6_addresses = [p.tunnel_ipv6 for p in Peer.objects.all()]
+    # vyos itself has the first address
     used_ipv6_addresses.append(str(next(IPv6Network(ipv6_prefix).hosts())))
     # Which of the network.num_addresses we want to select?
     addr_no = random.randint(0, net.num_addresses)
@@ -38,10 +38,9 @@ def _get_random_ipv6_address(ipv6_prefix) -> str:
     return ipv6_addr
 
 
-# TODO improve
 def _get_next_ipv4_address(ipv4_network: str) -> str:
     used_ipv4_addresses = [str(p.tunnel_ipv4) for p in Peer.objects.all()]
-    # vyos itself has 10.2.248.1
+    # vyos itself has the first address
     used_ipv4_addresses.append(str(next(IPv4Network(ipv4_network).hosts())))
     for addr in IPv4Network(ipv4_network).hosts():
         if str(addr) not in used_ipv4_addresses:
