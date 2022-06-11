@@ -148,6 +148,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+CSRF_TRUSTED_ORIGINS = [f'https://{x}' for x in environ.get('ALLOWED_HOSTS').split(' ')]
+
 # LDAP
 if environ.get('LDAP_URI', False):
     import ldap
