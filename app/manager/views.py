@@ -13,7 +13,9 @@ from manager.models import Peer
 
 @login_required(login_url='/oauth')
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "overview.html", context={"peers": Peer.objects.filter(owner=request.user).all()})
+    return render(request, "overview.html", context={
+        "peers": Peer.objects.filter(owner=request.user).all()
+    })
 
 
 # TODO improve
@@ -94,9 +96,7 @@ del interfaces wireguard wg100 peer {name}-{peer.name}""")
 
 @login_required(login_url='/oauth')
 def show_peer(request: HttpRequest, peer_id) -> HttpResponse:
-    peer = Peer.objects.filter(id=peer_id, owner=request.user).first()
-
-    if not peer:
+    if not (peer := Peer.objects.filter(id=peer_id, owner=request.user).first()):
         return HttpResponse(404)
 
     return render(request, "show_peer.html", context={

@@ -13,3 +13,6 @@ class Peer(models.Model):
 
     def __str__(self):
         return self.public_key
+
+    def tunnel_ips(self):
+        return f'{self.tunnel_ipv4}, {self.tunnel_ipv6}'

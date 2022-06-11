@@ -19,6 +19,4 @@ You can change the port inside the [`docker-compose.yml`](./docker-compose.yml#L
 
 ## Current News
 This app is in an early stage of development. It's hosted on: [the general vm on pve2](https://wpm.general.pve2.secshell.net).
-The vyos integration hasn't been implemented yet, so the commands will only be printed...
-
-Don't forget to adjust keycloak authentication flow (role and workflow has already been created, but need to be adjusted...)
+The vyos integration hasn't been implemented yet, so the commands will only be printed to the docker logs...
