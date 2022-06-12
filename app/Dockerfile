@@ -52,6 +52,9 @@ RUN if [[ "${DBMS}" == "postgres" ]]; then apk add --no-cache libpq; fi
 RUN if [[ "${AUTH}" == "openldap" ]]; then apk add --no-cache libldap; fi
 RUN if [[ "${AUTH}" == "oauth" ]]; then apk add --no-cache gcc musl-dev libffi-dev openssl-dev; fi
 
+# required for vymgmt, which is used to configure vyos
+RUN apk add --no-cache openssh
+
 COPY --from=builder /build/venv/ /usr/local/
 
 # copy project
