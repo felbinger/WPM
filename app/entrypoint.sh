@@ -78,10 +78,20 @@ if [ -z "${WG_IPV6_PREFIX}" ]; then
   echo "Missing environment variable: WG_IPV6_PREFIX"
   failed=1
 fi
+if [ -z "${VYOS_HOSTNAME}" ]; then
+  echo "Missing environment variable: VYOS_HOSTNAME"
+  failed=1
+fi
 if [ ${failed} -ne 0 ]; then
   exit 1
 fi
 
+if [ ! -f /home/app/.ssh/id_ed25519 ]; then
+  echo "Generating new ssh keypair..."
+  ssh-keygen -t ed25519 -f /home/app/.ssh/id_ed25519 -q -N '' -C ''
+  echo "Add the following Public Key to the vyos user wpm:"
+  cat /home/app/.ssh/id_ed25519.pub
+fi
 
 # shellcheck disable=SC2198
 if [ -z "${@}" ]; then

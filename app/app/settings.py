@@ -228,3 +228,6 @@ WG_ENDPOINT = environ.get("WG_ENDPOINT")
 WG_INTERFACE = environ.get("WG_INTERFACE", "wg100")
 WG_IPV4_NETWORK = environ.get("WG_IPV4_NETWORK")
 WG_IPV6_PREFIX = environ.get("WG_IPV6_PREFIX")
+
+VYOS_HOSTNAME = environ.get('VYOS_HOSTNAME')
+VYOS_USERNAME = environ.get('VYOS_USERNAME', 'wpm')

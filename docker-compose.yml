@@ -49,6 +49,7 @@ services:
       - 'WG_ENDPOINT=111.222.333.4444:51920'
       - 'WG_IPV4_NETWORK=10.0.248.0/22'
       - 'WG_IPV6_PREFIX=2001:db8::/64'
+      - 'VYOS_HOSTNAME=vyos.pve2.secshell.net'
     volumes:
       - 'app-static:/home/app/web/static'
 

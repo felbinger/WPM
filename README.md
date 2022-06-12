@@ -20,3 +20,6 @@ You can change the port inside the [`docker-compose.yml`](./docker-compose.yml#L
 ## Current News
 This app is in an early stage of development. It's hosted on: [the general vm on pve2](https://wpm.general.pve2.secshell.net).
 The vyos integration hasn't been implemented yet, so the commands will only be printed to the docker logs...
+
+
+* create ssh keypair if not exist (print public key in log) (entrypoint)
