@@ -87,7 +87,7 @@ def add(request: HttpRequest) -> HttpResponse:
             )
 
             name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-            asyncio.create_task(add_peer(name, peer))
+            asyncio.ensure_future(add_peer(name, peer))
             peer.save()
         return redirect('manager:index')
     else:
@@ -116,7 +116,7 @@ def delete_peer(name: str, peer: Peer):
 def delete(request: HttpRequest, peer_id) -> HttpResponse:
     if peer := Peer.objects.get(id=peer_id, owner=request.user):
         name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-        asyncio.create_task(delete_peer(name, peer))
+        asyncio.ensure_future(delete_peer(name, peer))
         peer.delete()
     return redirect('manager:index')
 
