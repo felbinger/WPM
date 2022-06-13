@@ -21,25 +21,20 @@ def index(request: HttpRequest) -> HttpResponse:
     })
 
 
-# TODO improve
 def _get_random_ipv6_address(ipv6_prefix) -> str:
     net = IPv6Network(ipv6_prefix)
     used_ipv6_addresses = [p.tunnel_ipv6 for p in Peer.objects.all()]
     # vyos itself has the first address
     used_ipv6_addresses.append(str(next(IPv6Network(ipv6_prefix).hosts())))
-    # Which of the network.num_addresses we want to select?
-    addr_no = random.randint(0, net.num_addresses)
-    # Create the random address by converting to a 128-bit integer, adding addr_no and converting back
-    network_int = int.from_bytes(net.network_address.packed, byteorder="big")
-    addr_int = network_int + addr_no
-    ipv6_addr = str(IPv6Address(addr_int.to_bytes(16, byteorder="big")))
-    while ipv6_addr in used_ipv6_addresses:
+    def _get():
         # Which of the network.num_addresses we want to select?
         addr_no = random.randint(0, net.num_addresses)
         # Create the random address by converting to a 128-bit integer, adding addr_no and converting back
         network_int = int.from_bytes(net.network_address.packed, byteorder="big")
         addr_int = network_int + addr_no
-        ipv6_addr = str(IPv6Address(addr_int.to_bytes(16, byteorder="big")))
+        return str(IPv6Address(addr_int.to_bytes(16, byteorder="big")))
+    while (ipv6_addr := _get()) in used_ipv6_addresses:
+        pass
     return ipv6_addr
 
 
@@ -87,8 +82,11 @@ def add(request: HttpRequest) -> HttpResponse:
             )
 
             name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-            # TODO doesn't work
-            asyncio.ensure_future(add_peer(name, peer))
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(add_peer(name, peer))
+            loop.close()
             peer.save()
         return redirect('manager:index')
     else:
@@ -117,8 +115,11 @@ def delete_peer(name: str, peer: Peer):
 def delete(request: HttpRequest, peer_id) -> HttpResponse:
     if peer := Peer.objects.get(id=peer_id, owner=request.user):
         name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-        # TODO doesn't work
-        asyncio.ensure_future(delete_peer(name, peer))
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(delete_peer(name, peer))
+        loop.close()
         peer.delete()
     return redirect('manager:index')
 
