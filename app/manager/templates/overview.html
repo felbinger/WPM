@@ -34,7 +34,6 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Tunnel IP's</th>
                             <th scope="col">Public Key</th>
@@ -45,7 +44,6 @@
                         <tbody>
                         {% for peer in peers %}
                             <tr>
-                                <td style="width: 5%">{{ peer.id }}</td>
                                 <td>{{ peer.name }}</td>
                                 <td>
                                     {{ peer.tunnel_ipv4 }}/32<br>
