@@ -1,5 +1,6 @@
 import asyncio
 import random
+from threading import Lock, Thread
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -12,6 +13,8 @@ from vymgmt import Router
 
 from manager.forms import NewPeerForm
 from manager.models import Peer
+
+firewall_locked = Lock()
 
 
 @login_required(login_url='/oauth')
@@ -48,23 +51,27 @@ def _get_next_ipv4_address(ipv4_network: str) -> str:
             return str(addr)
 
 
-@sync_to_async
 def add_peer(name: str, peer: Peer):
     vyos = Router(address=settings.VYOS_HOSTNAME, user=settings.VYOS_USERNAME)
     vyos.login()
-    vyos.configure()
 
-    vyos.set(f"firewall group address-group VPN-{name} address {peer.tunnel_ipv4}")
-    vyos.set(f"firewall group ipv6-address-group VPN-{name}-6 address {peer.tunnel_ipv6}")
-    wg_peer_path = f"interfaces wireguard {settings.WG_INTERFACE} peer {name}-{peer.name}"
-    vyos.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv4}/32")
-    vyos.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv6}/128")
-    vyos.set(f"{wg_peer_path} persistent-keepalive 30")
-    vyos.set(f"{wg_peer_path} pubkey {peer.public_key}")
+    with firewall_locked:
+        try:
+            vyos.configure()
 
-    vyos.commit()
-    vyos.save()
-    vyos.exit()
+            vyos.set(f"firewall group address-group VPN-{name} address {peer.tunnel_ipv4}")
+            vyos.set(f"firewall group ipv6-address-group VPN-{name}-6 address {peer.tunnel_ipv6}")
+            wg_peer_path = f"interfaces wireguard {settings.WG_INTERFACE} peer {name}-{peer.name}"
+            vyos.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv4}/32")
+            vyos.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv6}/128")
+            vyos.set(f"{wg_peer_path} persistent-keepalive 30")
+            vyos.set(f"{wg_peer_path} pubkey {peer.public_key}")
+
+            vyos.commit()
+            vyos.save()
+        finally:
+            vyos.exit()
+
     vyos.logout()
 
 
@@ -82,11 +89,8 @@ def add(request: HttpRequest) -> HttpResponse:
             )
 
             name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(add_peer(name, peer))
-            loop.close()
+            t = Thread(target=add_peer, args=(name, peer))
+            t.start()
             peer.save()
         return redirect('manager:index')
     else:
@@ -95,19 +99,23 @@ def add(request: HttpRequest) -> HttpResponse:
         })
 
 
-@sync_to_async
 def delete_peer(name: str, peer: Peer):
     vyos = Router(address=settings.VYOS_HOSTNAME, user=settings.VYOS_USERNAME)
     vyos.login()
-    vyos.configure()
 
-    vyos.delete(f"firewall group address-group VPN-{name} address {peer.tunnel_ipv4}")
-    vyos.delete(f"firewall group ipv6-address-group VPN-{name}-6 address {peer.tunnel_ipv6}")
-    vyos.delete(f"interfaces wireguard {settings.WG_INTERFACE} peer {name}-{peer.name}")
+    with firewall_locked:
+        try:
+            vyos.configure()
 
-    vyos.commit()
-    vyos.save()
-    vyos.exit()
+            vyos.delete(f"firewall group address-group VPN-{name} address {peer.tunnel_ipv4}")
+            vyos.delete(f"firewall group ipv6-address-group VPN-{name}-6 address {peer.tunnel_ipv6}")
+            vyos.delete(f"interfaces wireguard {settings.WG_INTERFACE} peer {name}-{peer.name}")
+
+            vyos.commit()
+            vyos.save()
+        finally:
+            vyos.exit()
+
     vyos.logout()
 
 
@@ -115,11 +123,8 @@ def delete_peer(name: str, peer: Peer):
 def delete(request: HttpRequest, peer_id) -> HttpResponse:
     if peer := Peer.objects.get(id=peer_id, owner=request.user):
         name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(delete_peer(name, peer))
-        loop.close()
+        t = Thread(target=delete_peer, args=(name, peer))
+        t.start()
         peer.delete()
     return redirect('manager:index')
 

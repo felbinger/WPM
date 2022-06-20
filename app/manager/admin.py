@@ -8,7 +8,7 @@ class PeerListFilter(admin.SimpleListFilter):
     parameter_name = 'owner'
 
     def lookups(self, request, model_admin):
-        return [(peer.owner.username, peer.owner.get_full_name()) for peer in Peer.objects.all()]
+        return list(set([(peer.owner.username, peer.owner.get_full_name()) for peer in Peer.objects.all()]))
 
     def queryset(self, request, queryset):
         qs = Peer.objects
