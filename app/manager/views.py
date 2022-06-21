@@ -1,23 +1,18 @@
-import asyncio
-import random
-from threading import Lock, Thread
-
-from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 
 from ipaddress import IPv4Network, IPv6Address, IPv6Network
-from vymgmt import Router
+import random
+from threading import Thread
 
 from manager.forms import NewPeerForm
 from manager.models import Peer
+from manager.vyos import add_peer, delete_peer
 
-firewall_locked = Lock()
 
-
-@login_required(login_url='/oauth')
+@login_required
 def index(request: HttpRequest) -> HttpResponse:
     return render(request, "overview.html", context={
         "peers": Peer.objects.filter(owner=request.user).all()
@@ -51,31 +46,7 @@ def _get_next_ipv4_address(ipv4_network: str) -> str:
             return str(addr)
 
 
-def add_peer(name: str, peer: Peer):
-    vyos = Router(address=settings.VYOS_HOSTNAME, user=settings.VYOS_USERNAME)
-    vyos.login()
-
-    with firewall_locked:
-        try:
-            vyos.configure()
-
-            vyos.set(f"firewall group address-group VPN-{name} address {peer.tunnel_ipv4}")
-            vyos.set(f"firewall group ipv6-address-group VPN-{name}-6 address {peer.tunnel_ipv6}")
-            wg_peer_path = f"interfaces wireguard {settings.WG_INTERFACE} peer {name}-{peer.name}"
-            vyos.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv4}/32")
-            vyos.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv6}/128")
-            vyos.set(f"{wg_peer_path} persistent-keepalive 30")
-            vyos.set(f"{wg_peer_path} pubkey {peer.public_key}")
-
-            vyos.commit()
-            vyos.save()
-        finally:
-            vyos.exit()
-
-    vyos.logout()
-
-
-@login_required(login_url='/oauth')
+@login_required
 def add(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = NewPeerForm(request.POST)
@@ -99,27 +70,7 @@ def add(request: HttpRequest) -> HttpResponse:
         })
 
 
-def delete_peer(name: str, peer: Peer):
-    vyos = Router(address=settings.VYOS_HOSTNAME, user=settings.VYOS_USERNAME)
-    vyos.login()
-
-    with firewall_locked:
-        try:
-            vyos.configure()
-
-            vyos.delete(f"firewall group address-group VPN-{name} address {peer.tunnel_ipv4}")
-            vyos.delete(f"firewall group ipv6-address-group VPN-{name}-6 address {peer.tunnel_ipv6}")
-            vyos.delete(f"interfaces wireguard {settings.WG_INTERFACE} peer {name}-{peer.name}")
-
-            vyos.commit()
-            vyos.save()
-        finally:
-            vyos.exit()
-
-    vyos.logout()
-
-
-@login_required(login_url='/oauth')
+@login_required
 def delete(request: HttpRequest, peer_id) -> HttpResponse:
     if peer := Peer.objects.get(id=peer_id, owner=request.user):
         name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
@@ -129,7 +80,7 @@ def delete(request: HttpRequest, peer_id) -> HttpResponse:
     return redirect('manager:index')
 
 
-@login_required(login_url='/oauth')
+@login_required
 def show_peer(request: HttpRequest, peer_id) -> HttpResponse:
     if not (peer := Peer.objects.filter(id=peer_id, owner=request.user).first()):
         return HttpResponse(404)

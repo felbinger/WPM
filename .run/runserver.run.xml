@@ -4,13 +4,13 @@
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
       <env name="ALLOWED_HOSTS" value="*" />
       <env name="DEBUG" value="1" />
       <env name="DJANGO_SETTINGS_MODULE" value="app.settings" />
       <env name="OAUTH_CLIENT_ID" value="wpm.general.pve2.secshell.net" />
       <env name="OAUTH_CLIENT_SECRET" value="SECRET" />
       <env name="OAUTH_URL" value="https://id.secshell.de/realms/main/protocol/openid-connect/auth" />
-      <env name="PYTHONUNBUFFERED" value="1" />
       <env name="SECRET_KEY" value="insecure" />
       <env name="SITE_PORT" value="8000" />
       <env name="SITE_SCHEMA" value="http" />
@@ -21,9 +21,9 @@
       <env name="WG_IPV6_PREFIX" value="2001:db8::/64" />
       <env name="WG_PUBKEY" value="remote pubeky" />
     </envs>
-    <option name="SDK_HOME" value="/usr/bin/python3" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../WPM/app" />
-    <option name="IS_MODULE_SDK" value="false" />
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />
+    <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="launchJavascriptDebuger" value="false" />

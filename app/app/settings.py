@@ -14,6 +14,7 @@ import random
 from os import environ
 from string import punctuation, digits, ascii_letters
 from pathlib import Path
+from vymgmt import Router
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -148,7 +149,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-CSRF_TRUSTED_ORIGINS = [f'https://{x}' for x in environ.get('ALLOWED_HOSTS').split(' ')]
+CSRF_TRUSTED_ORIGINS = [f'https://{x}' for x in ALLOWED_HOSTS]
 
 # LDAP
 if environ.get('LDAP_URI', False):
@@ -211,6 +212,7 @@ if environ.get('OAUTH_URL', False):
 
     LOGIN_REDIRECT_URL = "/manage/"
     LOGOUT_REDIRECT_URL = "/"
+    LOGIN_URL = "/oauth"
 
     OAUTH_URL = environ.get('OAUTH_URL')
     OAUTH_CLIENT_ID = environ.get("OAUTH_CLIENT_ID")
@@ -229,5 +231,4 @@ WG_INTERFACE = environ.get("WG_INTERFACE", "wg100")
 WG_IPV4_NETWORK = environ.get("WG_IPV4_NETWORK")
 WG_IPV6_PREFIX = environ.get("WG_IPV6_PREFIX")
 
-VYOS_HOSTNAME = environ.get('VYOS_HOSTNAME')
-VYOS_USERNAME = environ.get('VYOS_USERNAME', 'wpm')
+VYOS_ROUTER = Router(address=environ.get('VYOS_HOSTNAME'), user=environ.get('VYOS_USERNAME', 'wpm'))

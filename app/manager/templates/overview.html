@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -19,6 +20,7 @@
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta3/js/bootstrap.min.js"
                 integrity="sha512-mp3VeMpuFKbgxm/XMUU4QQUcJX4AZfV5esgX72JQr7H7zWusV6lLP1S78wZnX2z9dwvywil1VHkHZAqfGOW7Nw=="
                 crossorigin="anonymous"></script>
+        <script defer src="{% static 'delete_peer.js' %}"></script>
     </head>
     <body class="bg-dark">
         {% include 'navigation.html' %}
@@ -53,7 +55,9 @@
                                 <td style="width: 5%">
                                     <a href="{% url 'manager:show_peer' peer.id %}"><i class="fas fa-eye"></i></a>
                                 </td>
-                                <td style="width: 5%"><a href="{% url 'manager:delete' peer.id %}"><i class="fas fa-trash"></i></a></td>
+                                <td style="width: 5%"><a href="#" onclick="deletePeer({{ peer.id }}, {{ peers|length }});">
+                                    <i class="fas fa-trash"></i></a>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
