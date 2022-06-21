@@ -11,8 +11,8 @@ class Peer(models.Model):
     public_key = models.CharField(max_length=44)
     created = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.public_key
 
-    def tunnel_ips(self):
+    def tunnel_ips(self) -> str:
         return f'{self.tunnel_ipv4}, {self.tunnel_ipv6}'

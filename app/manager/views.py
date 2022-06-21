@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseNotFound, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 
 from threading import Thread
@@ -24,7 +24,7 @@ def add(request: HttpRequest) -> HttpResponse:
         form = NewPeerForm(request.POST)
         if form.is_valid():
             if not _is_base_64(request.POST['public_key']):
-                return HttpResponse("Invalid wireguard public key!")
+                return HttpResponseBadRequest("Invalid wireguard public key!")
 
             peer = Peer(
                 owner=request.user,
@@ -46,7 +46,7 @@ def add(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def delete(request: HttpRequest, peer_id) -> HttpResponse:
+def delete(request: HttpRequest, peer_id: int) -> HttpResponse:
     if peer := Peer.objects.get(id=peer_id, owner=request.user):
         name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
         t = Thread(target=delete_peer, args=(name, peer))
@@ -56,9 +56,9 @@ def delete(request: HttpRequest, peer_id) -> HttpResponse:
 
 
 @login_required
-def show_peer(request: HttpRequest, peer_id) -> HttpResponse:
+def show_peer(request: HttpRequest, peer_id: int) -> HttpResponse:
     if not (peer := Peer.objects.filter(id=peer_id, owner=request.user).first()):
-        return HttpResponse(404)
+        return HttpResponseNotFound("Peer does not exist, or access denied!")
 
     return render(request, "show_peer.html", context={
         "peer": peer,
