@@ -3,12 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 
-from ipaddress import IPv4Network, IPv6Address, IPv6Network
-import random
 from threading import Thread
 
 from manager.forms import NewPeerForm
 from manager.models import Peer
+from manager.utils import _is_base_64, _get_next_ipv4_address, _get_random_ipv6_address
 from manager.vyos import add_peer, delete_peer
 
 
@@ -19,38 +18,14 @@ def index(request: HttpRequest) -> HttpResponse:
     })
 
 
-def _get_random_ipv6_address(ipv6_prefix) -> str:
-    net = IPv6Network(ipv6_prefix)
-    used_ipv6_addresses = [p.tunnel_ipv6 for p in Peer.objects.all()]
-    # vyos itself has the first address
-    used_ipv6_addresses.append(str(next(IPv6Network(ipv6_prefix).hosts())))
-    def _get():
-        # Which of the network.num_addresses we want to select?
-        addr_no = random.randint(0, net.num_addresses)
-        # Create the random address by converting to a 128-bit integer, adding addr_no and converting back
-        network_int = int.from_bytes(net.network_address.packed, byteorder="big")
-        addr_int = network_int + addr_no
-        return str(IPv6Address(addr_int.to_bytes(16, byteorder="big")))
-    while (ipv6_addr := _get()) in used_ipv6_addresses:
-        pass
-    return ipv6_addr
-
-
-def _get_next_ipv4_address(ipv4_network: str) -> str:
-    used_ipv4_addresses = [str(p.tunnel_ipv4) for p in Peer.objects.all()]
-    # vyos itself has the first address
-    used_ipv4_addresses.append(str(next(IPv4Network(ipv4_network).hosts())))
-    for addr in IPv4Network(ipv4_network).hosts():
-        if str(addr) not in used_ipv4_addresses:
-            # return first address which is not in use
-            return str(addr)
-
-
 @login_required
 def add(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = NewPeerForm(request.POST)
         if form.is_valid():
+            if not _is_base_64(request.POST['public_key']):
+                return HttpResponse("Invalid wireguard public key!")
+
             peer = Peer(
                 owner=request.user,
                 name=request.POST['name'],

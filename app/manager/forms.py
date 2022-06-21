@@ -14,5 +14,5 @@ class NewPeerForm(Form):
         'placeholder': 'Public Key',
         'class': 'form-control',
         'maxlength': '44',
-        'readonly': 'true',
+        'pattern': "^[A-Za-z0-9+/]{43}=$",
     }), required=True)

@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.conf import settings
 from pexpect.pxssh import ExceptionPxssh
 from threading import Lock
@@ -9,7 +11,7 @@ from manager.models import Peer
 firewall_locked = Lock()
 
 
-def _connect() -> Router:
+def _connect() -> Union[Router, None]:
     router = settings.VYOS_ROUTER
 
     # establish connection to the router
