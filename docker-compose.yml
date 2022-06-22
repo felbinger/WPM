@@ -40,7 +40,7 @@ services:
       # Authentication Section
       - 'OAUTH_CLIENT_ID=wpm.general.example.secshell.net'
       - 'OAUTH_CLIENT_SECRET=8MMdQ5jjvEa2LXn4Aboq-OkxqI-4CWcw'
-      - 'OAUTH_URL=https://id.secshell.de/realms/main/protocol/openid-connect/auth'
+      - 'OAUTH_URL=https://id.secshell.de/realms/main'
       - 'SITE_URL=wpm.general.example.secshell.net'
 
       # Wireguard Peer Manager Section

@@ -24,7 +24,7 @@ if environ.get('OAUTH_URL', False):
             redirect_uri += f':{settings.SITE_PORT}'
         redirect_uri += reverse("base:oauth_redirect")
         return redirect(
-            f'{settings.OAUTH_URL}?'
+            f'{settings.OAUTH_URL}/protocol/openid-connect/auth?'
             f'client_id={settings.OAUTH_CLIENT_ID}'
             f'&redirect_uri={redirect_uri}'
             f'&response_type=code'
@@ -43,7 +43,7 @@ if environ.get('OAUTH_URL', False):
         redirect_uri += reverse("base:oauth_redirect")
 
         auth_resp = requests.post(
-            "https://keycloak.general.pve2.secshell.net/realms/main/protocol/openid-connect/token", data={
+            f'{settings.OAUTH_URL}/protocol/openid-connect/token', data={
                 "client_id": settings.OAUTH_CLIENT_ID,
                 "client_secret": settings.OAUTH_CLIENT_SECRET,
                 "grant_type": "authorization_code",

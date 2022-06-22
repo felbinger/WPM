@@ -58,16 +58,25 @@ python manage.py migrate
 
 # verify wireguard peer manager specific environment variables exist
 failed=0
+if [ -n "${WG_INTERFACE}" ]; then
+    re='^wg[0-9]+$'
+    if ! [[ "${WG_INTERFACE}" =~ $re ]]; then
+      echo "Invalid environment variable: WG_INTERFACE, need to match format wgN"
+      failed=1
+    fi
+fi
 if [ -z "${WG_DESCRIPTION}" ]; then
   echo "Missing environment variable: WG_DESCRIPTION"
   failed=1
 fi
 if [ -z "${WG_PUBKEY}" ]; then
   echo "Missing environment variable: WG_PUBKEY"
+  # TODO check if valid
   failed=1
 fi
 if [ -z "${WG_ENDPOINT}" ]; then
   echo "Missing environment variable: WG_ENDPOINT"
+  # TODO check if valid (ipv4 or ipv6 address)
   failed=1
 fi
 if [ -z "${WG_IPV4_NETWORK}" ]; then
@@ -81,6 +90,11 @@ fi
 if [ -z "${VYOS_HOSTNAME}" ]; then
   echo "Missing environment variable: VYOS_HOSTNAME"
   failed=1
+else
+  if  ! nc -z "${VYOS_HOSTNAME}" 22; then
+    echo "Invalid environment variable: VYOS_HOSTNAME, unable to establish connection to port 22"
+    failed=1
+  fi
 fi
 if [ ${failed} -ne 0 ]; then
   exit 1

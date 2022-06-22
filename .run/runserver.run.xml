@@ -10,7 +10,7 @@
       <env name="DJANGO_SETTINGS_MODULE" value="app.settings" />
       <env name="OAUTH_CLIENT_ID" value="wpm.general.pve2.secshell.net" />
       <env name="OAUTH_CLIENT_SECRET" value="SECRET" />
-      <env name="OAUTH_URL" value="https://id.secshell.de/realms/main/protocol/openid-connect/auth" />
+      <env name="OAUTH_URL" value="https://id.secshell.de/realms/main" />
       <env name="SECRET_KEY" value="insecure" />
       <env name="SITE_PORT" value="8000" />
       <env name="SITE_SCHEMA" value="http" />
