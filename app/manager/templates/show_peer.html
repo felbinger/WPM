@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -19,6 +20,7 @@
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta3/js/bootstrap.min.js"
                 integrity="sha512-mp3VeMpuFKbgxm/XMUU4QQUcJX4AZfV5esgX72JQr7H7zWusV6lLP1S78wZnX2z9dwvywil1VHkHZAqfGOW7Nw=="
                 crossorigin="anonymous"></script>
+        <script defer src="{% static 'show_peer.js' %}"></script>
     </head>
     <body class="bg-dark">
         {% include 'navigation.html' %}
@@ -30,25 +32,7 @@
                         <a href="{% url 'manager:index' %}"><i class="fas fa-undo float-right"></i></a>
                     </div>
                 </div>
-                <div class="card-body">
-                {% if not peer %}
-                    You haven't created any peers yet. Click <a href="{% url 'manager:overview' %}">here</a> to add a new peer.
-                {% else %}
-                    <code>
-                        # {{ remote.description }}<br>
-                        <br>
-                        [Interface]<br>
-                        Address = {{ peer.tunnel_ipv4 }}/32,{{ peer.tunnel_ipv6 }}/128<br>
-                        PrivateKey = ###### YOUR PRIVATE KEY ######<br>
-                        <br>
-                        [Peer]<br>
-                        PublicKey = {{ remote.publicKey }}<br>
-                        Endpoint = {{ remote.endpoint }}<br>
-                        AllowedIPs = 0.0.0.0/0,::/0<br>
-                        PersistentKeepalive = 30<br>
-                    </code>
-                {% endif %}
-                </div>
+                <div class="card-body" id="showPeerBody"></div>
             </div>
         </div>
     </body>

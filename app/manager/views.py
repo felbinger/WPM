@@ -1,3 +1,6 @@
+import json
+
+from deprecation import deprecated
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound, HttpResponseBadRequest
@@ -64,14 +67,25 @@ def delete(request: HttpRequest, peer_id: int) -> HttpResponse:
 
 @login_required
 def show_peer(request: HttpRequest, peer_id: int) -> HttpResponse:
-    if not (peer := Peer.objects.filter(id=peer_id, owner=request.user).first()):
-        return HttpResponseNotFound("Peer does not exist, or access denied!")
+    return render(request, "show_peer.html")
 
-    return render(request, "show_peer.html", context={
-        "peer": peer,
+
+@login_required
+def show_peer_api(request: HttpRequest, peer_id: int) -> HttpResponse:
+    if not (peer := Peer.objects.filter(id=peer_id, owner=request.user).first()):
+        return HttpResponseNotFound(json.dumps({
+           "error": "not_found_or_forbidden",
+        }))
+
+    return HttpResponse(json.dumps({
+        "peer": {
+            "publicKey": peer.public_key,
+            "tunnelIpv4": peer.tunnel_ipv4,
+            "tunnelIpv6": peer.tunnel_ipv6,
+        },
         "remote": {
             "description": settings.WG_DESCRIPTION,
             "publicKey": settings.WG_PUBKEY,
             "endpoint": settings.WG_ENDPOINT,
-        }
-    })
+        },
+    }))
