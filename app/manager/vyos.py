@@ -26,8 +26,6 @@ def _connect() -> Union[Router, None]:
 
 def add_peer(name: str, peer: Peer):
     if not (router := _connect()):
-        # delete peer because it can't create on the firewall
-        peer.delete()
         return
 
     # lock the configuration and add the peer
@@ -47,9 +45,12 @@ def add_peer(name: str, peer: Peer):
             router.save()
         except Exception as e:
             print(e)
-            peer.delete()
         finally:
             router.exit()
+
+            # set valid flag
+            peer.valid = True
+            peer.save()
 
     router.logout()
 
@@ -58,7 +59,7 @@ def delete_peer(name: str, peer: Peer):
     if not (router := _connect()):
         return
 
-    # lock the configuration and add the peer
+    # lock the configuration and delete the peer
     with firewall_locked:
         try:
             router.configure()
@@ -73,5 +74,8 @@ def delete_peer(name: str, peer: Peer):
             print(e)
         finally:
             router.exit()
+
+            # delete peer from database
+            peer.delete()
 
     router.logout()

@@ -10,6 +10,7 @@ class Peer(models.Model):
     tunnel_ipv6 = models.GenericIPAddressField()
     public_key = models.CharField(max_length=44)
     created = models.DateTimeField(default=timezone.now)
+    valid = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.public_key

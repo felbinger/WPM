@@ -91,9 +91,11 @@ if [ -z "${VYOS_HOSTNAME}" ]; then
   echo "Missing environment variable: VYOS_HOSTNAME"
   failed=1
 else
-  if  ! nc -z "${VYOS_HOSTNAME}" 22; then
-    echo "Invalid environment variable: VYOS_HOSTNAME, unable to establish connection to port 22"
-    failed=1
+  if [ "${DEBUG}" != 0 ]; then
+    if  ! nc -z "${VYOS_HOSTNAME}" 22; then
+      echo "Invalid environment variable: VYOS_HOSTNAME, unable to establish connection to port 22"
+      failed=1
+    fi
   fi
 fi
 if [ ${failed} -ne 0 ]; then

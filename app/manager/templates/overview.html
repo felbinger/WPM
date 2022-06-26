@@ -39,6 +39,7 @@
                             <th scope="col">Name</th>
                             <th scope="col">Tunnel IP's</th>
                             <th scope="col">Public Key</th>
+                            <th scope="col">State</th>
                             <th></th>
                             <th scope="col"><a href="{% url 'manager:add' %}"><i class="fas fa-plus"></i></a></th>
                         </tr>
@@ -52,6 +53,13 @@
                                     {{ peer.tunnel_ipv6 }}/128<br>
                                 </td>
                                 <td>{{ peer.public_key }}</td>
+                                <td style="width: 10%">
+                                    {% if device.valid %}
+                                    <span class="badge bg-success">Valid</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Invalid</span>
+                                    {% endif %}
+                                </td>
                                 <td style="width: 5%">
                                     <a href="{% url 'manager:show_peer' peer.id %}"><i class="fas fa-eye"></i></a>
                                 </td>
