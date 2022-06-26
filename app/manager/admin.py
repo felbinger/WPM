@@ -19,7 +19,7 @@ class PeerListFilter(admin.SimpleListFilter):
 
 class PeerAdmin(admin.ModelAdmin):
     model = Peer
-    list_display = ('owner', 'public_key', 'name', 'tunnel_ips', 'created',)
+    list_display = ('owner', 'public_key', 'name', 'tunnel_ips', 'created', 'valid',)
     list_filter = (PeerListFilter,)
 
 

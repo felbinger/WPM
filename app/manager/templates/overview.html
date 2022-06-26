@@ -54,10 +54,10 @@
                                 </td>
                                 <td>{{ peer.public_key }}</td>
                                 <td style="width: 10%">
-                                    {% if device.valid == true %}
-                                    <span class="badge bg-success">Valid</span>
-                                    {% else %}
+                                    {% if not peer.valid %}
                                     <span class="badge bg-danger">Invalid</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Valid</span>
                                     {% endif %}
                                 </td>
                                 <td style="width: 5%">

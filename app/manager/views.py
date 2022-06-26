@@ -23,8 +23,14 @@ def add(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = NewPeerForm(request.POST)
         if form.is_valid():
+
+            # check if public key is valid
             if not _is_base_64(request.POST['public_key']):
                 return HttpResponseBadRequest("Invalid wireguard public key!")
+
+            # check if name is already in use
+            if request.POST['name'].lower() in {p.name.lower() for p in Peer.objects.all()}:
+                return HttpResponseBadRequest("Peer name already in use!")
 
             peer = Peer(
                 owner=request.user,
