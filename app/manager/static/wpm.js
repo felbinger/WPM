@@ -16,7 +16,7 @@ function openAddPeerModal() {
  */
 document.getElementById("addPeerButton").addEventListener('click', async e => {
     e.preventDefault();
-    const name = document.getElementById("addPeerModalName").value;
+    const nameInput = document.getElementById("addPeerModalName");
     const publicKey = document.getElementById("addPeerModalPublicKey").value;
 
     const response = await fetch('/manage/add', {
@@ -26,15 +26,20 @@ document.getElementById("addPeerButton").addEventListener('click', async e => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            name: name,
+            name: nameInput.value,
             publicKey: publicKey,
         }),
         mode: 'same-origin',  // Do not send CSRF token to another domain.
     });
     if (response.status === 200) {
+        // reload table when peer has been added successfully
         await showPeerTable();
+    } else {
+        const responseBody = await response.json();
+        alert(responseBody.error);
     }
     addPeerModal.hide();
+    nameInput.value = "";
 });
 
 /**
@@ -100,7 +105,7 @@ async function showPeerTable() {
             const deletePeerCell = row.insertCell(5);
             const deletePeerLink = document.createElement("a");
             deletePeerLink.href = "javascript:void(0)";
-            deletePeerLink.onclick = () => deletePeer(peer.id, responseBody.length);
+            deletePeerLink.onclick = () => deletePeer(peer.id, responseBody.peers.length);
             const deletePeerLinkIcon = document.createElement("i");
             deletePeerLinkIcon.className = "fas fa-trash";
             deletePeerLink.appendChild(deletePeerLinkIcon);
@@ -176,3 +181,6 @@ async function deletePeer(id, count) {
  * Load peer table directly after the website has been opened.
  */
 showPeerTable().then();
+const showPeerTableInterval = setInterval(function() {
+    showPeerTable().then();
+}, 10000);
