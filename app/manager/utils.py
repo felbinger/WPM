@@ -2,6 +2,9 @@ import binascii
 from base64 import b64decode, b64encode
 from ipaddress import IPv6Network, IPv6Address, IPv4Network
 import random
+from string import printable, ascii_uppercase
+
+from django.contrib.auth.models import User
 
 from manager.models import Peer
 
@@ -42,3 +45,26 @@ def _get_random_ipv6_address(ipv6_prefix: str) -> str:
     while (ipv6_addr := _get_random()) in used_ipv6_addresses:
         pass
     return ipv6_addr
+
+
+# replace the invalid characters in the name
+def _check_and_replace_name(name: str) -> str:
+    for k, v in {
+        'Ä': 'AE',
+        'Ö': 'OE',
+        'Ü': 'UE',
+        'ß': 'SS',
+    }.items():
+        name = name.replace(k, v)
+
+    for c in printable.replace(ascii_uppercase, ""):
+        if c not in name:
+            continue
+        print(f"WARNING: name string contains character {c}")
+        name.remove(c)
+
+    return name
+
+
+def _get_name(user: User) -> str:
+    return f'{_check_and_replace_name(user.first_name.upper())}-{_check_and_replace_name(user.last_name.upper())}'

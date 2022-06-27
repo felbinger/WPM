@@ -8,7 +8,7 @@ from django.shortcuts import render
 from threading import Thread
 
 from manager.models import Peer
-from manager.utils import _is_base_64, _get_next_ipv4_address, _get_random_ipv6_address
+from manager.utils import _is_base_64, _get_next_ipv4_address, _get_random_ipv6_address, _get_name
 from manager.vyos import add_peer, delete_peer
 
 
@@ -58,9 +58,7 @@ def add(request: HttpRequest) -> HttpResponse:
                 tunnel_ipv6=_get_random_ipv6_address(settings.WG_IPV6_PREFIX),
             )
             peer.save()
-
-            name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-            t = Thread(target=add_peer, args=(name, peer))
+            t = Thread(target=add_peer, args=(_get_name(request.user), peer))
             t.start()
             return HttpResponse()
     return HttpResponseBadRequest(json.dumps({
@@ -77,8 +75,7 @@ def delete(request: HttpRequest, peer_id: int) -> HttpResponse:
     if peer := Peer.objects.get(id=peer_id, owner=request.user):
         peer.valid = False
         peer.save()
-        name = f'{request.user.first_name.upper()}-{request.user.last_name.upper()}'
-        t = Thread(target=delete_peer, args=(name, peer))
+        t = Thread(target=delete_peer, args=(_get_name(request.user), peer))
         t.start()
     return HttpResponse(status=201)
 
