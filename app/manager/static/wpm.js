@@ -79,7 +79,7 @@ async function showPeerTable() {
             // indicator whether the wireguard peer has been applied on the other side of the tunnel (here: vyos router)
             const peerValid = row.insertCell(3);
             const peerValidCircle = document.createElement("i");
-            peerValidCircle.className = "fas fa-circle"
+            peerValidCircle.className = "fa-solid fa-circle"
             if (peer.valid) {
                 peerValidCircle.title = "Peer is valid and should be working!";
                 peerValidCircle.style.color = "#4cb34c";
@@ -97,7 +97,7 @@ async function showPeerTable() {
             showPeerModalLink.href = "javascript:void(0)";
             showPeerModalLink.onclick = () => showPeer(peer.id);
             const showPeerModalLinkIcon = document.createElement("i");
-            showPeerModalLinkIcon.className = "fas fa-eye";
+            showPeerModalLinkIcon.className = "fa-solid fa-eye";
             showPeerModalLink.appendChild(showPeerModalLinkIcon);
             showPeerModal.appendChild(showPeerModalLink);
 
@@ -107,7 +107,7 @@ async function showPeerTable() {
             deletePeerLink.href = "javascript:void(0)";
             deletePeerLink.onclick = () => deletePeer(peer.id, responseBody.peers.length);
             const deletePeerLinkIcon = document.createElement("i");
-            deletePeerLinkIcon.className = "fas fa-trash";
+            deletePeerLinkIcon.className = "fa-solid fa-trash";
             deletePeerLink.appendChild(deletePeerLinkIcon);
             deletePeerCell.appendChild(deletePeerLink);
         });

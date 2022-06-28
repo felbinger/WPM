@@ -15,9 +15,9 @@
                             <li><a class="dropdown-item" href="{% url 'base:oauth' %}">Login (OAuth)</a></li>
                         {% else %}
                             <li><a class="dropdown-item" href="{% url 'manager:index' %}">Manage Peers</a></li>
-                        {% endif %}
-                        {% if user.is_staff and user.is_superuser %}
-                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Dashboard</a></li>
+                            {% if user.is_staff and user.is_superuser %}
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Dashboard</a></li>
+                            {% endif %}
                         {% endif %}
                     </ul>
                 </li>
