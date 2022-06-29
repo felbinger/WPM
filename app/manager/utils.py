@@ -57,7 +57,7 @@ def _check_and_replace_name(name: str) -> str:
     }.items():
         name = name.replace(k, v)
 
-    for c in printable.replace(ascii_uppercase + digits, ""):
+    for c in set(printable).difference(set(ascii_uppercase + digits)):
         if c not in name:
             continue
         print(f"WARNING: name string contains character {c}")
