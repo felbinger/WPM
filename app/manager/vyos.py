@@ -3,11 +3,9 @@ from typing import Union
 from django.conf import settings
 from pexpect.pxssh import ExceptionPxssh
 from threading import Lock
-from pexpect import pxssh
-
-from vymgmt import Router
 
 from manager.models import Peer
+from manager.router import Router
 
 firewall_locked = Lock()
 
@@ -17,10 +15,7 @@ def _connect() -> Union[Router, None]:
 
     # establish connection to the router
     try:
-        router.__conn = pxssh.pxssh(router.__timeout, options = dict(StrictHostKeyChecking="no", UserKnownHostsFile="/dev/null"))
-
-        router.__conn.login(router.__address, router.__user, password=router.__password, port=router.__port, ssh_key=router.__ssh_key)
-        router.__logged_in = True
+        router.login()
     except ExceptionPxssh:
         print("Unable to establish connection to router!")
         return

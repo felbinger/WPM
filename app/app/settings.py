@@ -14,7 +14,7 @@ import random
 from os import environ
 from string import punctuation, digits, ascii_letters
 from pathlib import Path
-from vymgmt import Router
+from manager.router import Router
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
