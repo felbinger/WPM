@@ -2,7 +2,7 @@ import binascii
 from base64 import b64decode, b64encode
 from ipaddress import IPv6Network, IPv6Address, IPv4Network
 import random
-from string import printable, ascii_uppercase
+from string import printable, ascii_uppercase, digits
 
 from django.contrib.auth.models import User
 
@@ -57,11 +57,11 @@ def _check_and_replace_name(name: str) -> str:
     }.items():
         name = name.replace(k, v)
 
-    for c in printable.replace(ascii_uppercase, ""):
+    for c in printable.replace(ascii_uppercase + digits, ""):
         if c not in name:
             continue
         print(f"WARNING: name string contains character {c}")
-        name.remove(c)
+        name.replace(c, '')
 
     return name
 
