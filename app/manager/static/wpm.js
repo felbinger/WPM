@@ -9,6 +9,7 @@ function openAddPeerModal() {
     wg = window.wireguard.generateKeypair();
     document.getElementById("addPeerModalPublicKey").value = wg.publicKey;
     document.getElementById("addPeerPrivateKey").innerText = wg.privateKey;
+    document.getElementById("addPeerModalName").value = "";
     addPeerModal.show();
     delete wg
 }
@@ -20,6 +21,7 @@ document.getElementById("addPeerButton").addEventListener('click', async e => {
     e.preventDefault();
     const nameInput = document.getElementById("addPeerModalName");
     const publicKey = document.getElementById("addPeerModalPublicKey").value;
+    const addPeerError = document.getElementById("addPeerError");
 
     const response = await fetch('/manage/add', {
         method: 'POST',
@@ -36,12 +38,28 @@ document.getElementById("addPeerButton").addEventListener('click', async e => {
     if (response.status === 200) {
         // reload table when peer has been added successfully
         await showPeerTable();
+        addPeerModal.hide();
     } else {
         const responseBody = await response.json();
-        alert(responseBody.error);
+        switch (responseBody.error) {
+            case 'invalid_wireguard_public_key':
+                addPeerError.innerText = "Invalid Wireguard Public Key!";
+                break;
+            case 'invalid_peer_name_format':
+                addPeerError.innerText = "Invalid Wireguard Peer Name!";
+                break;
+            case 'peer_name_already_in_use':
+                addPeerError.innerText = "Wireguard Peer Name is already in use!";
+                break;
+            case 'invalid_payload':
+                addPeerError.innerText = "Invalid Payload, contact Nico!";
+                break;
+            default:
+                addPeerError.innerText = responseBody.error;
+                break;
+        }
+        addPeerError.style.display = 'block';
     }
-    addPeerModal.hide();
-    nameInput.value = "";
 });
 
 /**
@@ -146,10 +164,13 @@ async function showPeer(id) {
     } else {
         // in case of error, handle the error
         let showPeerError = document.createElement('p');
-        if (responseBody.error === 'not_found_or_forbidden') {
-            showPeerError.innerHTML = "Peer not found or access denied, <a href='..'>go back to the overview</a>!";
-        } else {
-            showPeerError.innerText = responseBody.error;
+        switch (responseBody.error) {
+            case 'not_found_or_forbidden':
+                showPeerError.innerHTML = "Peer not found or access denied, <a href='..'>go back to the overview</a>!";
+                break;
+            default:
+                showPeerError.innerText = responseBody.error;
+                break;
         }
         showPeerBody.appendChild(showPeerError);
     }

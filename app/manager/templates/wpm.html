@@ -81,6 +81,7 @@
                     </div>
                     <div class="modal-body">
                         <form method="POST">
+                            <div class="alert alert-warning" id="addPeerError" style="display:none;"></div>
                             {% csrf_token %}
                             <p>
                                 A new keypair has been generated.
