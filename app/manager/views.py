@@ -45,15 +45,21 @@ def add(request: HttpRequest) -> HttpResponse:
         if 'name' in data and 'publicKey' in data:
             # check if public key is valid
             if not re.match(r'^[A-Za-z0-9+/]{43}=$', data['publicKey']) or not _is_base_64(str(data['publicKey'])):
-                return HttpResponseBadRequest("Invalid wireguard public key!")
+                return HttpResponseNotFound(json.dumps({
+                   "error": "invalid_wireguard_public_key",
+                }))
 
             # check if name matches format
             if not re.match(r'^[A-Za-z0-9]{1,32}$', data['name']):
-                return HttpResponseBadRequest("Invalid peer name.")
+                return HttpResponseNotFound(json.dumps({
+                   "error": "invalid_peer_name_format",
+                }))
 
             # check if name is already in use
             if str(data['name']).upper() in {p.name.upper() for p in Peer.objects.all()}:
-                return HttpResponseBadRequest("Peer name already in use!")
+                return HttpResponseNotFound(json.dumps({
+                   "error": "peer_name_already_in_use",
+                }))
 
             peer = Peer(
                 owner=request.user,

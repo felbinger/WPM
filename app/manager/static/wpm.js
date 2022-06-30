@@ -5,10 +5,12 @@ const showConfigModal = new bootstrap.Modal(document.getElementById('showConfigM
  * open the bootstrap modal to create a new peer
  */
 function openAddPeerModal() {
-    const wg = window.wireguard.generateKeypair();
+    // removed const/let/var to enable deletion of the variable after the keys have been extracted.
+    wg = window.wireguard.generateKeypair();
     document.getElementById("addPeerModalPublicKey").value = wg.publicKey;
     document.getElementById("addPeerPrivateKey").innerText = wg.privateKey;
     addPeerModal.show();
+    delete wg
 }
 
 /**
