@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -43,11 +44,15 @@ def add(request: HttpRequest) -> HttpResponse:
 
         if 'name' in data and 'publicKey' in data:
             # check if public key is valid
-            if not _is_base_64(str(data['publicKey'])):
+            if not re.match(r'^[A-Za-z0-9+/]{43}=$', data['publicKey']) or not _is_base_64(str(data['publicKey'])):
                 return HttpResponseBadRequest("Invalid wireguard public key!")
 
+            # check if name matches format
+            if not re.match(r'^[A-Za-z0-9]{1,32}$', data['name']):
+                return HttpResponseBadRequest("Invalid peer name.")
+
             # check if name is already in use
-            if str(data['name']).lower() in {p.name.lower() for p in Peer.objects.all()}:
+            if str(data['name']).upper() in {p.name.upper() for p in Peer.objects.all()}:
                 return HttpResponseBadRequest("Peer name already in use!")
 
             peer = Peer(
