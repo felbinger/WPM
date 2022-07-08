@@ -20,6 +20,7 @@
       <env name="WG_IPV4_NETWORK" value="10.2.240.0/24" />
       <env name="WG_IPV6_PREFIX" value="2001:db8::/64" />
       <env name="WG_PUBKEY" value="remote pubeky" />
+      <env name="DNS_SERVER" value="10.2.0.0" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />

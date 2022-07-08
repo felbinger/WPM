@@ -110,5 +110,6 @@ def show_peer(request: HttpRequest, peer_id: int) -> HttpResponse:
             "description": settings.WG_DESCRIPTION,
             "publicKey": settings.WG_PUBKEY,
             "endpoint": settings.WG_ENDPOINT,
+            "dnsServer": settings.DNS_SERVER,
         },
     }))

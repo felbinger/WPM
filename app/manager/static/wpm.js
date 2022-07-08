@@ -154,6 +154,7 @@ async function showPeer(id) {
             [Interface]
             Address = ${responseBody.peer.tunnelIpAddresses.join(',')}
             PrivateKey = ###### YOUR PRIVATE KEY ######
+            DNS = ${responseBody.remote.dnsServer}
 
             [Peer]
             PublicKey = ${responseBody.remote.publicKey}

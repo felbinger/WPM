@@ -50,6 +50,7 @@ services:
       - 'WG_IPV4_NETWORK=10.0.248.0/22'
       - 'WG_IPV6_PREFIX=2001:db8::/64'
       - 'VYOS_HOSTNAME=vyos.pve2.secshell.net'
+      - 'DNS_SERVER=10.2.0.0'
     volumes:
       - 'app-static:/home/app/web/static'
 

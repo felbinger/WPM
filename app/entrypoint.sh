@@ -98,6 +98,10 @@ else
     fi
   fi
 fi
+if [ -z "${DNS_SERVER}" ]; then
+  echo "Missing environment variable: DNS_SERVER"
+  failed=1
+fi
 if [ ${failed} -ne 0 ]; then
   exit 1
 fi
