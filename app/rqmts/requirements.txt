@@ -1,3 +1,3 @@
-Django==4.0.6
+Django==4.1
 gunicorn==20.1.0
 vymgmt==0.1
