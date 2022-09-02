@@ -3,6 +3,7 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpRequest, HttpResponseNotFound, HttpResponseBadRequest
 from django.shortcuts import render
 
@@ -113,3 +114,11 @@ def show_peer(request: HttpRequest, peer_id: int) -> HttpResponse:
             "dnsServer": settings.DNS_SERVER,
         },
     }))
+
+
+def source_groups(request: HttpRequest) -> HttpResponse:
+    return HttpResponse('\n'.join([f'VPN-{_get_name(user)}' for user in User.objects.all()]))
+
+
+def source_groups6(request: HttpRequest) -> HttpResponse:
+    return HttpResponse('\n'.join([f'VPN-{_get_name(user)}-6' for user in User.objects.all()]))
