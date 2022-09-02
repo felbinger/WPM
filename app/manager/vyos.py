@@ -39,6 +39,8 @@ def add_peer(name: str, peer: Peer):
             router.set(f"{wg_peer_path} allowed-ips {peer.tunnel_ipv6}/128")
             router.set(f"{wg_peer_path} persistent-keepalive 30")
             router.set(f"{wg_peer_path} pubkey {peer.public_key}")
+            if peer.psk:
+                router.set(f"{wg_peer_path} preshared-key {peer.psk}")
 
             router.commit()
             router.save()

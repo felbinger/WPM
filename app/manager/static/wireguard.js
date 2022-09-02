@@ -174,6 +174,9 @@
 				publicKey: keyToBase64(publicKey),
 				privateKey: keyToBase64(privateKey)
 			};
-		}
+		},
+		generatePSK: function() {
+			return keyToBase64(generatePresharedKey());
+		},
 	};
 })();
