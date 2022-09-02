@@ -62,10 +62,16 @@ def add(request: HttpRequest) -> HttpResponse:
                    "error": "peer_name_already_in_use",
                 }))
 
+            if 'psk' in data and data["psk"] != "" and not re.match(r'^[A-Za-z0-9+/]{43}=$', data['psk']):
+                return HttpResponseNotFound(json.dumps({
+                    "error": "invalid_wireguard_psk",
+                }))
+
             peer = Peer(
                 owner=request.user,
                 name=data['name'],
                 public_key=data['publicKey'],
+                psk=data.get('psk', None),
                 tunnel_ipv4=_get_next_ipv4_address(settings.WG_IPV4_NETWORK),
                 tunnel_ipv6=_get_random_ipv6_address(settings.WG_IPV6_PREFIX),
             )
@@ -102,6 +108,7 @@ def show_peer(request: HttpRequest, peer_id: int) -> HttpResponse:
     return HttpResponse(json.dumps({
         "peer": {
             "publicKey": peer.public_key,
+            "psk": peer.psk or '',
             "tunnelIpAddresses": [
                 f'{peer.tunnel_ipv4}/32',
                 f'{peer.tunnel_ipv6}/128',

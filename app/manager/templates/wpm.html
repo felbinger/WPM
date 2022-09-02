@@ -98,7 +98,7 @@
                                                pattern="^[A-Za-z0-9]{1,32}$"
                                                required=""
                                                id="addPeerModalName">
-                                        <label for="name">Name</label>
+                                        <label for="addPeerModalName">Name</label>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -110,7 +110,25 @@
                                                pattern="^[A-Za-z0-9+/]{43}=$"
                                                required=""
                                                id="addPeerModalPublicKey">
-                                        <label for="local_port">Public Key</label>
+                                        <label for="addPeerModalPublicKey">Public Key</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="addPeerModalEnablePSK" />
+                                        <label class="form-check-label" for="addPeerModalEnablePSK">Enable PSK</label>
+                                    </div>
+                                    <div class="form-floating mb-3" id="addPeerModalPSKOuterElem" style="display: none;">
+                                        <input type="text"
+                                               placeholder="Pre-Shared-Key"
+                                               class="form-control"
+                                               maxlength="44"
+                                               pattern="^[A-Za-z0-9+/]{43}=$"
+                                               required=""
+                                               id="addPeerModalPSK">
+                                        <label for="addPeerModalPSK">PSK</label>
                                     </div>
                                 </div>
                             </div>

@@ -10,6 +10,8 @@ function openAddPeerModal() {
     document.getElementById("addPeerModalPublicKey").value = wg.publicKey;
     document.getElementById("addPeerPrivateKey").innerText = wg.privateKey;
     document.getElementById("addPeerModalName").value = "";
+    document.getElementById("addPeerModalEnablePSK").checked = false;
+    document.getElementById("addPeerModalPSK").value = "";
     addPeerModal.show();
     delete wg
 }
@@ -21,6 +23,7 @@ document.getElementById("addPeerButton").addEventListener('click', async e => {
     e.preventDefault();
     const nameInput = document.getElementById("addPeerModalName");
     const publicKey = document.getElementById("addPeerModalPublicKey").value;
+    const psk = document.getElementById("addPeerModalPSK").value;
     const addPeerError = document.getElementById("addPeerError");
 
     const response = await fetch('/manage/add', {
@@ -32,6 +35,7 @@ document.getElementById("addPeerButton").addEventListener('click', async e => {
         body: JSON.stringify({
             name: nameInput.value,
             publicKey: publicKey,
+            psk: psk,
         }),
         mode: 'same-origin',  // Do not send CSRF token to another domain.
     });
@@ -44,6 +48,9 @@ document.getElementById("addPeerButton").addEventListener('click', async e => {
         switch (responseBody.error) {
             case 'invalid_wireguard_public_key':
                 addPeerError.innerText = "Invalid Wireguard Public Key!";
+                break;
+            case 'invalid_wireguard_psk':
+                addPeerError.innerText = "Invalid Wireguard PSK!";
                 break;
             case 'invalid_peer_name_format':
                 addPeerError.innerText = "Invalid Wireguard Peer Name!";
@@ -148,19 +155,23 @@ async function showPeer(id) {
     // if peer exists and the required information is in the response show wireguard configuration
     if (response.status === 200 && 'peer' in responseBody && 'remote' in responseBody) {
         let showPeerConfig = document.createElement('code');
-        showPeerConfig.innerText =
-            `# ${responseBody.remote.description}
-
-            [Interface]
-            Address = ${responseBody.peer.tunnelIpAddresses.join(',')}
-            PrivateKey = ###### YOUR PRIVATE KEY ######
-            DNS = ${responseBody.remote.dnsServer}
-
-            [Peer]
-            PublicKey = ${responseBody.remote.publicKey}
-            Endpoint = ${responseBody.remote.endpoint}
-            AllowedIPs = 0.0.0.0/0,::/0
-            PersistentKeepalive = 30`;
+        let peerConfig = [];
+        peerConfig.push(
+            `# ${responseBody.remote.description}\n\n`,
+            `[Interface]\n`,
+            `Address = ${responseBody.peer.tunnelIpAddresses.join(',')}\n`,
+            `PrivateKey = ###### YOUR PRIVATE KEY ######\n`,
+            `DNS = ${responseBody.remote.dnsServer}\n\n`,
+            `[Peer]\n`,
+            `PublicKey = ${responseBody.remote.publicKey}\n`,
+            `Endpoint = ${responseBody.remote.endpoint}\n`,
+            `AllowedIPs = 0.0.0.0/0,::/0\n`,
+            `PersistentKeepalive = 30\n`,
+        );
+        if (responseBody.peer.psk) {
+            peerConfig.push(`PresharedKey = ${responseBody.peer.psk}\n`)
+        }
+        showPeerConfig.innerText = peerConfig.join("");
         showPeerBody.appendChild(showPeerConfig);
     } else {
         // in case of error, handle the error
@@ -200,6 +211,21 @@ async function deletePeer(id, count) {
         await showPeerTable()
     }
 }
+
+/**
+ * When the user checks the switch "Enable PSK", generate the psk and make it visible
+ */
+document.getElementById("addPeerModalEnablePSK").addEventListener('change', (e) => {
+    // generate psk
+    // show psk field
+    if (e.target.checked) {
+        document.getElementById("addPeerModalPSK").value = window.wireguard.generatePSK();
+        document.getElementById("addPeerModalPSKOuterElem").style.display = "block";
+    } else {
+        document.getElementById("addPeerModalPSK").value = "";
+        document.getElementById("addPeerModalPSKOuterElem").style.display = "none";
+    }
+});
 
 /**
  * Load peer table directly after the website has been opened.
